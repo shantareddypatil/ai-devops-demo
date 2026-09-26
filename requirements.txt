@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+langchain-cohere
+python-dotenv
