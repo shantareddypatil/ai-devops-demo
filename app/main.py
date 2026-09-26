@@ -20,3 +20,6 @@ def ask(q: str):
         return {"answer": f"(demo mode) you asked: {q}"}
     response = llm.invoke(q)
     return {"answer": response.content}
+@app.get("/add")
+def add(a:int, b:int):
+    return a+b
