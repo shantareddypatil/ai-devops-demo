@@ -1,11 +1,19 @@
 import os
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from langchain_cohere import ChatCohere
 from dotenv import load_dotenv
-import os
+
 load_dotenv()
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 cohere_api_key = os.getenv("COHERE_API_KEY")
 model = os.getenv("MODEL_NAME", "command-a-03-2025")
 llm = ChatCohere(cohere_api_key=cohere_api_key, temperature=0.1, model=model) if cohere_api_key else None

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI DevOps Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 15px;
+            width: 600px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        h1 { text-align: center; color: #e94560; margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: #0f3460;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover { background: #c73652; }
+        .answer {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0f3460;
+            border-radius: 8px;
+            min-height: 60px;
+            line-height: 1.6;
+        }
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI DevOps Demo</h1>
+        <input
+            type="text"
+            id="question"
+            placeholder="Ask anything..."
+            onkeypress="if(event.key==='Enter') askQuestion()"
+        />
+        <button onclick="askQuestion()">Ask AI</button>
+        <div class="answer" id="answer">
+            Your answer will appear here...
+        </div>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // check health on load
+        fetch("http://localhost:8000/health")
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById("status").innerText
+                    = "✅ Backend: " + d.status;
+            })
+            .catch(() => {
+                document.getElementById("status").innerText
+                    = "❌ Backend not reachable";
+            });
+
+        async function askQuestion() {
+            const q = document.getElementById("question").value;
+            if (!q) return;
+
+            document.getElementById("answer").innerText = "Thinking...";
+
+            try {
+                const res = await fetch(
+                    `http://localhost:8000/ask?q=${encodeURIComponent(q)}`
+                );
+                const data = await res.json();
+                document.getElementById("answer").innerText = data.answer;
+            } catch (err) {
+                document.getElementById("answer").innerText
+                    = "Error: Backend not reachable";
+            }
+        }
+    </script>
+</body>
+</html>
